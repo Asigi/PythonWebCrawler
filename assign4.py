@@ -2,6 +2,7 @@ import re
 import urllib
 from random import choice
 import csv
+import os
 
 try:
     import urllib.request
@@ -52,13 +53,10 @@ def crawl(url, urlDict):
         results.append(re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', alink))
 
 
-    words = []
-    
 
 
 
-
-    #Find and and add all the links
+    #Find and add all the links
     for dlink in results:
         linkslist = urlDict.get(url)
         if dlink not in linkslist:
@@ -73,9 +71,10 @@ def crawl(url, urlDict):
 
 
 
-
 #The main function
 def mymain():
+
+    
     urlDict = makeDict() 
     urlCount = 0 #this is the number of pages scanned.
     usedURL_list = []
@@ -84,7 +83,7 @@ def mymain():
     
     while urlCount <= len(urlDict):
         
-        if urlCount == 100: #process a max of 100 sites.
+        if urlCount == 3: #process a max of 100 sites.
             break;
         
         theChoice = choice(list(urlDict.keys()))
@@ -100,10 +99,15 @@ def mymain():
             print("urlCount is now at ", urlCount) #test
 
 
-    writer = csv.writer(open('crawl.csv', 'wb'))
-    for key, value in urlDict.items():
-        writer.writerow([key, value])
+    print("ENDING")
+    print(urlDict.get("https://www.yahoo.com/"))
 
+    with open('crawl.csv','w', newline='') as f:
+        w = csv.writer(f)
+        w.writerows(urlDict.items())
+        
+
+    
 
             
 #Find the main function
@@ -115,63 +119,9 @@ if __name__ == '__main__':
 
 
 
-'''
-sites = 'google yahoo cnn msn'.split()
-
-pat = re.compile(r'<title>+.*</title>+', re.I|re.M)
-#note that the + in the reg.express. requires atleast one occurance of the thing. Its dif than *
-for s in sites:
-    print ('Searching: ' + s)
-    try:
-        u = urllib.urlopen('http://' + s + '.com')
-    except:
-        u = urllib.request.urlopen('http://' + s + '.com')
-    text = u.read()
-    title = re.findall(pat, str(text))
-    print(title[0])
-'''
-
-'''
-def crawl(url, maxlevel):
-    # Limit the recursion, we're not downloading the whole Internet
-    if(maxlevel == 0):
-        return
-    
-    # Get the webpage
-    try:
-        req = urllib.urlopen(url)
-    except:
-        req = urllib.request.urlopen(url)
-    
-    result = []
-
-    # Find and follow all the links
-    links = link_re.findall(str(req.read()))
-    pastlink = ""
-    for link in links:
-        if link is not None:
-            pastlink = str(link)
-            print("link is: ", str(link))
-            pastlink = link
-            result += crawl(link, maxlevel - 1)
-
-    return result
-'''
-
-#this is how links will be found
-#link_re = re.compile(r'<a href="(http.*?)".*>', re.I|re.M)
 
 
-#NOTE: website address must begin with HTTP or HTTPS
-
-#r'<a href="(.*?)".*>(.*)</a>'
-#NOTE: this re also gives me (<link here>, <linked word here>)
 
 
-    #links = re.findall(r"\w+le", str(req.read()))
-    #print(len(links))
-    #r'<a href="(http.*?)".*>'
 
-    
- #   links = re.findall('a href\s?=\s?"http[s]?://\S*', str(req.read()))
 
